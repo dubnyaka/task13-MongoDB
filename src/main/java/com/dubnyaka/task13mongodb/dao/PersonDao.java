@@ -3,6 +3,10 @@ package com.dubnyaka.task13mongodb.dao;
 import com.dubnyaka.task13mongodb.data.PersonData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +21,13 @@ public class PersonDao {
 
     public Optional<PersonData> get(String id) {
         return Optional.of(db.findById(id, PersonData.class));
+    }
+
+    public List<PersonData> getByLastname(String lastName){
+        Criteria criteria = new Criteria();
+
+        criteria.and("last_name").is(lastName);
+        return db.find(Query.query(criteria),PersonData.class);
     }
 
     public Optional<List<PersonData>> getAll(){
