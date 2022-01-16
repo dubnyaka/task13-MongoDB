@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Setter
 @Builder
 @Jacksonized
-public class PersonDto {
+public class PersonSaveDto {
     private String id;
 
     private String first_name;

@@ -3,6 +3,7 @@ package com.dubnyaka.task13mongodb.service;
 import com.dubnyaka.task13mongodb.dao.PersonDao;
 import com.dubnyaka.task13mongodb.data.PersonData;
 import com.dubnyaka.task13mongodb.dto.PersonDto;
+import com.dubnyaka.task13mongodb.dto.PersonSaveDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,11 @@ public class PersonServiceImpl implements PersonService {
     private final PersonDao personDao;
 
     @Override
-    public void savePerson(PersonDto clientDto) {
-
+    public String savePerson(PersonSaveDto personDto) {
+        PersonData personData = new PersonData();
+        copyDtoToData(personDto,personData);
+        personDao.save(personData);
+        return personData.getId();
     }
 
     @Override
@@ -58,8 +61,8 @@ public class PersonServiceImpl implements PersonService {
         return personDao.getByLastname(lastname)
                 .stream().map(data -> PersonDto.builder()
                         .id(data.getId())
-                        .firstName(data.getFirst_name())
-                        .lastName(data.getLast_name())
+                        .first_name(data.getFirst_name())
+                        .last_name(data.getLast_name())
                         .build()
                 ).toList();
     }
@@ -74,11 +77,17 @@ public class PersonServiceImpl implements PersonService {
         return false;
     }
 
+    private void copyDtoToData(PersonSaveDto personDto, PersonData personData){
+        personData.setFirst_name(personDto.getFirst_name());
+        personData.setLast_name(personDto.getLast_name());
+        personData.setId(personDto.getId());
+    }
+
     private PersonDto convertDataToDto(PersonData data) {
         return PersonDto.builder()
                 .id(data.getId())
-                .firstName(data.getFirst_name())
-                .lastName(data.getLast_name())
+                .first_name(data.getFirst_name())
+                .last_name(data.getLast_name())
                 .build();
     }
 }

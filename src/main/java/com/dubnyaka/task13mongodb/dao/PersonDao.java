@@ -3,8 +3,6 @@ package com.dubnyaka.task13mongodb.dao;
 import com.dubnyaka.task13mongodb.data.PersonData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -16,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PersonDao {
 
-    // MongoOperations - интерфейс MongoTemplate
     private final MongoOperations db;
 
     public Optional<PersonData> get(String id) {
@@ -34,8 +31,9 @@ public class PersonDao {
         return Optional.of(db.findAll(PersonData.class));
     }
 
-    public void save(PersonData client) {
-        db.save(client);
+
+    public void save(PersonData personData) {
+        db.save(personData);
     }
 
 }
