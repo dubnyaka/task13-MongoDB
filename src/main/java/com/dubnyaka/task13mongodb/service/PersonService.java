@@ -1,22 +1,39 @@
 package com.dubnyaka.task13mongodb.service;
 
-import com.dubnyaka.task13mongodb.data.PersonData;
+import com.dubnyaka.task13mongodb.dao.PersonDao;
 import com.dubnyaka.task13mongodb.dto.PersonDto;
-import com.dubnyaka.task13mongodb.dto.PersonSaveDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-public interface PersonService {
+@Service
+@RequiredArgsConstructor
+public class PersonService {
 
-    String savePerson(PersonSaveDto personDto);
+    @Autowired
+    private PersonDao personDao;
 
-    List getAllPersons();
+    public List<Map.Entry<String, Integer>> getTop10PepFirstNames() {
+        List<String> pepFirstNames = personDao.getPepOnlyFirstNames()
+                .stream().map(document -> document.getString("first_name")).toList();
 
-    PersonData getPerson(String id);
+        LinkedHashMap<String, Integer> output = new LinkedHashMap<>();
+        for (String pepFirstName : pepFirstNames) {
+            output.computeIfPresent(pepFirstName, (key, value) -> value + 1);
+            output.putIfAbsent(pepFirstName, 1);
+        }
 
-    List getPersonByLastname(String lastname);
+        return output.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10).toList();
+    }
 
-    boolean updatePerson(PersonDto personDto);
+    public List<PersonDto> getPersonByFullName(String fullName){
+        return personDao.findByFull_name(fullName);
+    }
 
-    boolean deletePerson(String id);
 }

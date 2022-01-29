@@ -1,40 +1,22 @@
 package com.dubnyaka.task13mongodb.dao;
 
 import com.dubnyaka.task13mongodb.data.PersonData;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import com.dubnyaka.task13mongodb.dto.PersonDto;
+import org.bson.Document;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
-public class PersonDao {
+public interface PersonDao extends MongoRepository<PersonData, String> {
 
-    private final MongoOperations db;
+    @Query(value = "{'full_name': ?0}")
+    List<PersonDto> findByFull_name(String fullName);
 
-    public Optional<PersonData> get(String id) {
-        return Optional.of(db.findById(id, PersonData.class));
-    }
-
-    public List<PersonData> getByLastname(String lastName){
-        Criteria criteria = new Criteria();
-
-        criteria.and("last_name").is(lastName);
-        return db.find(Query.query(criteria),PersonData.class);
-    }
-
-    public Optional<List<PersonData>> getAll(){
-        return Optional.of(db.findAll(PersonData.class));
-    }
-
-
-    public void save(PersonData personData) {
-        db.save(personData);
-    }
+    @Query(value = "{'is_pep': true}", fields = "{'_id':0, 'first_name':1}")
+    List<Document> getPepOnlyFirstNames();
 
 }
 

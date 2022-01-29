@@ -12,7 +12,11 @@ import lombok.extern.jackson.Jacksonized;
 public class PersonDto {
     private String id;
 
-    private String first_name;
+    private String full_name;
 
-    private String last_name;
+    private String type_of_official;
+
+    private boolean is_pep;
+
+    private boolean died;
 }
